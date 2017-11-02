@@ -1,0 +1,18 @@
+Package: mrspecr
+Type: Package
+Title: MR spectroscopy analyzer
+Version: 0.1.1
+Authors@R: c(person(given="Shantanu", family="Joshi", role=c("cre","aut"), email="shjoshi@ieee.org"),
+      			 person("Antonio", "Marquina", role="aut"),
+             person("Karina", "Patel", role="aut")
+             )
+Description: This package analyzes MR spectroscopy signals.
+License: TBD | file LICENSE
+Copyright: The Regents of the University of California.
+LazyData: true
+Encoding: UTF-8
+Imports:
+    oro.dicom
+RoxygenNote: 6.0.1
+URL: 
+Suggests: testthat
