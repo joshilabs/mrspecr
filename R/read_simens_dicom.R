@@ -122,6 +122,7 @@ parse_siemens_mrs_dicom_header <- function(rawString, sq.txt="", endian="little"
         ## SpectroscopyData
         value <- "SpectroscopyData"
         spectroscopyData <- TRUE
+        dseek <- strseek
         # dseek <- strseek + 4 # HACK: not sure why I need to skip an extra four bytes
       } else {
         if (VR$code %in% c("UL","US")) { # (VR$code == "UL" || VR$code == "US") {
@@ -163,12 +164,12 @@ parse_siemens_mrs_dicom_header <- function(rawString, sq.txt="", endian="little"
       groupElement <- paste("(", group, ",", element, ")", sep="")
       if (lengthraw > 0) {
         ## Pass length of bytes provided explicitly by the sequence tag
-        dcm <- parseDICOMHeader(rawString[strseek + 1:lengthraw],
+        dcm <- parse_siemens_mrs_dicom_header(rawString[strseek + 1:lengthraw],
                                 paste(sq.txt, groupElement),
                                 verbose=verbose)
       } else {
         ## Pass remaining bytes and look for SequenceDelimitationItem tag
-        dcm <- parseDICOMHeader(rawString[(strseek + 1):length(rawString)],
+        dcm <- parse_siemens_mrs_dicom_header(rawString[(strseek + 1):length(rawString)],
                                 paste(sq.txt, groupElement),
                                 verbose=verbose)
         lengthraw <- dcm$data.seek
@@ -189,7 +190,9 @@ parse_siemens_mrs_dicom_header <- function(rawString, sq.txt="", endian="little"
 read_siemens_mrs_dicom <- function(fname, endian="little", boffset=NULL, debug=FALSE) {
   
   fsize <- file.info(fname)$size
-  fraw <- readBin(fname, "raw", n=as.integer(fsize), endian=endian)
+  fd <- file(fname, 'rb')
+  # fraw <- readBin(fname, "raw", n=as.integer(fsize), endian=endian)
+  fraw <- readBin(fd, "raw", n=as.integer(fsize), endian=endian)
   if (is.null(boffset) && any(as.integer(fraw[1:128]) != 0)) {
     stop("Non-zero bytes are present in the first 128, please use\nboffset to skip the necessary number of bytes.")
   }
@@ -217,5 +220,36 @@ read_siemens_mrs_dicom <- function(fname, endian="little", boffset=NULL, debug=F
   }  
   dcm <- parse_siemens_mrs_dicom_header(fraw[bstart:fsize], seq.txt, endian=endian, verbose=debug)
   complex_fid <- convert_raw_fid_to_complex(dcm$rawfid)
+  close(fd)
+  return(list(fid = complex_fid, dcm = dcm))
 
 }
+
+#' @export
+replace_fid_in_siemens_mrs_dicom <- function(filename, complex_fid) {
+  
+  if (! file.exists(filename))
+    stop(sprintf('Dicom file %s does not exist', filename), call. = FALSE)
+  
+  mrs_dcm <- read_siemens_mrs_dicom(filename)
+  old_real_part <- Re(mrs_dcm$fid)
+  old_imag_part <- Im(mrs_dcm$fid)
+  new_real_part <- Re(complex_fid)
+  new_imag_part <- Im(complex_fid)
+  
+  # Check if the length of the new complex_fid is same as the length of the existing complex_fid  
+  if ( (length(old_real_part) != length(new_real_part)) ||  (length(old_imag_part) != length(new_imag_part)) ) 
+    stop(sprintf('The length of Spectroscopy fid signal does not match the signal length in file\n'), call. = FALSE)
+
+  fd <- file(filename, 'r+b')
+  # Skip to the dicom fid signal
+  seek(fd, where = mrs_dcm$dcm$data.seek + 132, rw = "write")
+  odd <- seq(1, length(complex_fid)*2, by=2)
+  even <- seq(2, length(complex_fid)*2, by=2)
+  y = numeric(length(complex_fid)*2)
+  y[odd] <- new_real_part
+  y[even] <- new_imag_part
+  writeBin(y, fd, size = 4)
+  close(fd)
+}
+
