@@ -52,7 +52,7 @@ lcmodel_extract_coord <- function(coordfile,outfile=NULL)
   ysplitlist<-strsplit(yfitlist," +")
   yfit<-as.double(ysplitlist[[1]][2:length(ysplitlist[[1]])])
   
-  X <- data.frame(ppmx,yfit)
+  X <- data.frame(yfit)
   if (!is.null(outfile))
   {
     write.csv(X, outfile)
@@ -62,7 +62,7 @@ lcmodel_extract_coord <- function(coordfile,outfile=NULL)
 }
 
 
-lcmodel_extract_batch <- function(coordfile)
+lcmodel_extract_batch <- function(coordfile,outfile=NULL)
 {
   coordslist=list()
   #create empty list for dataframes to be pushed into
@@ -71,7 +71,10 @@ lcmodel_extract_batch <- function(coordfile)
     #X<-lcmodel_extract_coord(x)
     coordslist<-c(coordslist,lcmodel_extract_coord(x))
   }
-  
+  if (!is.null(outfile))
+  {
+    write.csv(coordslist, outfile)
+  }
   return (coordslist)
 }
 
