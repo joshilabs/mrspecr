@@ -1,3 +1,4 @@
+#' @export
 lcmodel_extract_coord <- function(coordfile,outfile=NULL)
 {
   c<-1
@@ -55,13 +56,13 @@ lcmodel_extract_coord <- function(coordfile,outfile=NULL)
   X <- data.frame(yfit)
   if (!is.null(outfile))
   {
-    write.csv(X, outfile)
+    utils::write.csv(X, outfile)
   }
   
   return (X)
 }
 
-
+#' @export
 lcmodel_extract_batch <- function(coordfile,outfile=NULL)
 {
   coordslist=list()
@@ -73,7 +74,7 @@ lcmodel_extract_batch <- function(coordfile,outfile=NULL)
   }
   if (!is.null(outfile))
   {
-    write.csv(coordslist, outfile)
+    utils::write.csv(coordslist, outfile)
   }
   return (coordslist)
 }
