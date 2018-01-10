@@ -12,7 +12,8 @@ Copyright: The Regents of the University of California.
 LazyData: true
 Encoding: UTF-8
 Imports:
-    oro.dicom
+    oro.dicom,
+    fdasrvf
 RoxygenNote: 6.0.1
 URL: 
 Suggests: testthat
