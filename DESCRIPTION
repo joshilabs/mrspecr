@@ -13,7 +13,8 @@ LazyData: true
 Encoding: UTF-8
 Imports:
     oro.dicom,
-    fdasrvf
+    fdasrvf,
+    R.matlab
 RoxygenNote: 6.0.1
 URL: 
 Suggests: testthat
