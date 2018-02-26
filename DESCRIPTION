@@ -14,7 +14,9 @@ Encoding: UTF-8
 Imports:
     oro.dicom,
     fdasrvf,
-    R.matlab
+    R.matlab,
+    plyr,
+    stringr
 RoxygenNote: 6.0.1
 URL: 
 Suggests: testthat
