@@ -152,56 +152,55 @@ return (X)
 #' @export
 lcmodel_extract_batch <- function(coordfile,outfile=NULL)
 {
-  coordslist=list()
-  #create empty list for dataframes to be pushed into
+coordslist=list()
+#create empty list for dataframes to be pushed into
   
-  # for (x in readLines(coordfile))
-  # {
-  #   coordslist<-c(coordslist,lcmodel_extract_coord_y(x))
-  # }
-  coordslist <- lapply(readLines(coordfile),lcmodel_extract_coord_y)
-  coordmatrix <- matrix(unlist(coordslist), nrow = 480)
-  if (!is.null(outfile))
-  {
-    utils::write.csv(coordmatrix, outfile)
-  }
-  return (coordmatrix)
+# for (x in readLines(coordfile))
+# {
+#   coordslist<-c(coordslist,lcmodel_extract_coord_y(x))
+# }
+coordslist <- lapply(readLines(coordfile),lcmodel_extract_coord_y)
+coordmatrix <- matrix(unlist(coordslist), nrow = 480)
+if (!is.null(outfile))
+{
+  utils::write.csv(coordmatrix, outfile)
+}
+return (coordmatrix)
 }
 
-
-#' @export
 #extracts metabolive values and S/N
+#' @export
 lcmodel_extract_metab <- function(lcmodel_outdir,outfile=NULL)
 {
-  #customizing filepath to read to metabolite csv and sn table
-  csvfile <- file.path(lcmodel_outdir, 'spreadsheet.csv')
-  tblfile <- file.path(lcmodel_outdir, 'table')
+#customizing filepath to read to metabolite csv and sn table
+csvfile <- file.path(lcmodel_outdir, 'spreadsheet.csv')
+tblfile <- file.path(lcmodel_outdir, 'table')
   
-  #pull metabolites
-  met_levels<-read.csv(csvfile, nrows=2)
+#pull metabolites
+met_levels<-read.csv(csvfile, nrows=2)
   
-  #remove whitespace from table
-  c<-1
-  tbl=list(0)
-  for (i in readLines(tblfile))
-  {
-    tbl[c]<-trimws(i)
-    c<- c+1
-  }
+#remove whitespace from table
+c<-1
+tbl=list(0)
+for (i in readLines(tblfile))
+{
+  tbl[c]<-trimws(i)
+  c<- c+1
+}
   
-  #pull S/N value
-  sn_val<-as.numeric(stringr::str_sub(tbl[45],-2,-1))
-  met_levels$SN<- sn_val
+#pull S/N value
+sn_val<-as.numeric(stringr::str_sub(tbl[45],-2,-1))
+met_levels$SN<- sn_val
   
-  if (!is.null(outfile))
-  {
-    utils::write.csv(met_levels, outfile)
-  }
-  return (met_levels)
+if (!is.null(outfile))
+{
+  utils::write.csv(met_levels, outfile)
+}
+return (met_levels)
 }
 
-#' @export
 #extracts batch met levels and S/N
+#' @export
 lcmodel_extract_metab_batch <- function(filepaths,outfile=NULL)
 {
   
@@ -216,3 +215,5 @@ lcmodel_extract_metab_batch <- function(filepaths,outfile=NULL)
   }
   return (metlist)
 }
+
+
