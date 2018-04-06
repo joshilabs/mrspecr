@@ -216,4 +216,36 @@ lcmodel_extract_metab_batch <- function(filepaths,outfile=NULL)
   return (metlist)
 }
 
+#create metabolite data matrix with subj_id and classification
+#' @export
+metab_matrix <- function(coordfile,sub_id,outfile=NULL)
+{
+  subj <- as.matrix(read.csv(sub_id,sep=",")) 
+  mat <- as.matrix(lcmodel_extract_metab_batch(coordfile))
+  metab_mat <- cbind(subj,mat[,-c(1,2)])
+  
+  if (!is.null(outfile))
+  {
+    utils::write.csv(metab_mat, outfile)
+  }
+  return (metab_mat)
+}
+
+#create feature fxn data matrix with subj_id and classification
+#' @export
+fxn_matrix <- function(coordfile,sub_id,outfile=NULL)
+{
+  subj <- as.matrix(read.csv(sub_id,sep=",")) 
+  mat <- t(lcmodel_extract_batch(coordfile))
+  fxn_mat <- cbind(subj,mat)
+  
+  if (!is.null(outfile))
+  {
+    utils::write.csv(fxn_mat, outfile)
+  }
+  return (fxn_mat)
+}
+
+
+
 
