@@ -41,7 +41,7 @@ metab_peak <- function(filepath,outfile=NULL)
 #' @export
 metab_concentrations <- function(filepaths,outfile=NULL)
 {
-  metabs<-lcmodel_extract_metab_batch(filepaths)
+  metab_pull<-lcmodel_extract_metab_batch(filepaths)
   concentrations<-cbind(metab_pull$NAA,metab_pull$Cr.PCr)
   colnames(concentrations)<-c("NAA_conc","Cre_conc")
   return(concentrations)
